@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb-service
+  labels:
+    app: mariadb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mariadb
+  template:
+    metadata:
+      labels:
+        app: mariadb
+    spec:
+      containers:
+        - name: mariadb
+          image: mariadb:10.6.19-focal
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "ubuntu"
+            - name: MYSQL_DATABASE
+              value: "ubuntu"
+            - name: MYSQL_USER
+              value: "ubuntu"
+            - name: MYSQL_PASSWORD
+              value: "ubuntu"
+          volumeMounts:
+            - name: mariadb-init
+              mountPath: /docker-entrypoint-initdb.d/
+      volumes:
+        - name: mariadb-init
+          configMap:
+            name: mariadb-init
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb-service
+spec:
+  selector:
+    app: mariadb
+  ports:
+    - port: 3306
+      protocol: TCP
+      targetPort: 3306

@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: visitor-service
+  labels:
+    app: visitor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: visitor
+  template:
+    metadata:
+      labels:
+        app: visitor
+    spec:
+      containers:
+        - name: visitor-container
+          image: hy30k/k8s-visitor:fpj
+          ports:
+            - containerPort: 8050
+          env:
+            - name: UVICORN_PORT
+              value: "8050"
+          command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8050", "--reload"]
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: visitor-service
+spec:
+  selector:
+    app: visitor
+  ports:
+    - protocol: TCP
+      port: 8050
+      targetPort: 8050
+      nodePort: 30002  # NodePort 설정
+  type: NodePort
