@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>관리자 대시보드</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f2f5;
+      color: #333;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 50px auto;
+      background: #fff;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+    nav {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+    nav a {
+      color: #4CAF50;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 10px;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    h2 {
+      text-align: center;
+      color: #4CAF50;
+      margin-bottom: 1.5rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      padding: 15px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    th {
+      background-color: #f4f4f4;
+      font-weight: bold;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .home-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #4CAF50;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .home-link:hover {
+      text-decoration: underline;
+    }
+    .btn-reject {
+      background-color: #f44336;
+    }
+    .btn-reject:hover {
+      background-color: #e53935;
+    }
+  </style>
+  <script>
+    async function handleApproval(visitorId, action) {
+      try {
+        const url = `/admin-${action}/${visitorId}`;
+        console.log("Requesting URL:", url);
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          // 승인 또는 거절 성공 시 메시지 표시
+          if (action === 'approve') {
+            alert(`방문이 승인되었습니다.`);
+          } else if (action === 'reject') {
+            alert(`방문이 거절되었습니다.`);
+          }
+          // 승인 또는 거절된 방문자를 화면에서 제거
+          document.getElementById(`visitor-${visitorId}`).remove();
+        } else {
+          // 응답이 실패한 경우
+          const errorText = await response.text();
+          console.error("처리 중 오류 발생:", errorText);
+          alert("처리 중 오류가 발생했습니다.");
+        }
+      } catch (error) {
+        console.error("요청 처리 중 오류 발생:", error);
+        alert("요청 처리 중 오류가 발생했습니다.");
+      }
+    }
+
+
+
+  </script>
+</head>
+<body>
+<div class="container">
+  <a href="/" class="home-link"><i class="fas fa-home"></i> 홈으로</a>
+  <nav>
+    <a href="/admin-dashboard">승인 요청</a>
+    <a href="/visitor-list">방문자 목록 조회</a>
+    <a href="/statistics">통계 페이지</a>
+  </nav>
+
+  <h2>승인 요청</h2>
+  <% if (pending_visitors && pending_visitors.length > 0) { %>
+    <table>
+      <tr>
+        <th>이름</th>
+        <th>이메일</th>
+        <th>전화번호</th>
+        <th>요청 시간</th>
+        <th>방문 목적</th>
+        <th>승인/거절</th>
+      </tr>
+      <% pending_visitors.forEach(visitor => { %>
+        <tr id="visitor-<%= visitor.uno %>">
+          <td><%= visitor.name %></td>
+          <td><%= visitor.email %></td>
+          <td><%= visitor.phone %></td>
+          <td><%= visitor.regdate ? new Date(visitor.regdate).toLocaleString('ko-KR') : '등록된 시간이 없습니다.' %></td>
+          <td><%= visitor.ob %></td>
+          <td>
+            <button onclick="handleApproval('<%= visitor.uno %>', 'approve')">승인</button>
+            <button class="btn-reject" onclick="handleApproval('<%= visitor.uno %>', 'reject')">거절</button>
+          </td>
+        </tr>
+      <% }); %>
+    </table>
+  <% } else { %>
+    <p>현재 승인 요청이 없습니다.</p>
+  <% } %>
+</div>
+</body>
+</html>

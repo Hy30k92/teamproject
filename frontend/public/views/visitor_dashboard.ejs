@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>모든 방문자 목록</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: #ffffff;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        button {
+            padding: 8px 12px;
+            background-color: #28a745;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        button:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+        button:active {
+            transform: scale(1);
+        }
+        a.home-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        a.home-link:hover {
+            color: #4CAF50;
+        }
+        form {
+            margin-top: 20px;
+            text-align: center;
+        }
+        form button {
+            background-color: #4CAF50;
+        }
+        form button:hover {
+            background-color: #4CAF50;
+        }
+        .highlight-status {
+            font-size: 36px;
+            font-weight: bold;
+            color: #ff9800; /* 강조 색상 */
+        }
+    </style>
+</head>
+<body>
+<a href="/" class="home-link"><i class="fas fa-home"></i> 홈으로</a>
+<h1>모든 방문자 목록</h1>
+<table>
+    <thead>
+    <tr>
+        <th>이름</th>
+        <th>이메일</th>
+        <th>전화번호</th>
+        <th>방문 목적</th>
+        <th>신청 날짜</th>
+        <th>승인 상태</th>
+        <th>퇴입</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% visitors.forEach(visitor => { %>
+        <tr id="visitor-<%= visitor.uno %>">
+            <td><%= visitor.name %></td>
+            <td><%= visitor.email %></td>
+            <td><%= visitor.phone %></td>
+            <td><%= visitor.ob %></td>
+            <td><%= new Date(visitor.regdate).toLocaleString() %></td>
+            <td id="visitor-status-<%= visitor.uno %>">
+                <% if (visitor.status === "PENDING") { %>
+                    대기 중
+                <% } else if (visitor.status === "APPROVED") { %>
+                    승인됨
+                <% } else if (visitor.status === "REJECTED") { %>
+                    거부됨
+                <% } else if (visitor.status === "EXIT") { %>
+                    퇴입
+                <% } else { %>
+                    알 수 없음
+                <% } %>
+            </td>
+            <td id="exit-cell-<%= visitor.uno %>">
+                <% if (visitor.status === "APPROVED") { %>
+                    <button onclick="logExit('<%= visitor.uno %>')">퇴입</button>
+                <% } %>
+            </td>
+        </tr>
+    <% }); %>
+    </tbody>
+</table>
+
+<script>
+    // 방문자의 특정 상태를 강조하여 표시하는 함수
+    function highlightStatus(uno) {
+        const statusElement = document.getElementById(`visitor-status-${uno}`);
+        if (statusElement) {
+            statusElement.classList.add('highlight-status');
+        }
+    }
+
+    // URL에서 특정 방문자 ID를 가져오기 위한 코드
+    const urlParams = new URLSearchParams(window.location.search);
+    const highlightUno = urlParams.get('highlight');
+
+    if (highlightUno) {
+        highlightStatus(highlightUno);
+    }
+
+    function logExit(uno) {
+        fetch(`/api/exit/${uno}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ admin_id: 1 })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById(`visitor-status-${uno}`).innerHTML = '퇴입';
+                    document.getElementById(`exit-cell-${uno}`).innerHTML = '퇴입 완료';
+                    alert("퇴입되었습니다.");
+                } else {
+                    alert(data.message || "퇴입에 실패했습니다.");
+                }
+            })
+            .catch(error => alert(`서버 오류: ${error.message}`));
+    }
+</script>
+
+</body>
+</html>

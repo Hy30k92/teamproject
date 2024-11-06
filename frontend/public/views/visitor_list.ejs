@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>모든 방문자 목록</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f0f2f5;
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    th, td {
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+    }
+    th {
+      background-color: #4CAF50;
+      color: #ffffff;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    button {
+      padding: 8px 12px;
+      background-color: #28a745;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    button:hover {
+      background-color: #218838;
+      transform: scale(1.05);
+    }
+    button:active {
+      transform: scale(1);
+    }
+    nav {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+    nav a {
+      color: #4CAF50;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 10px;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    a.home-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      text-decoration: none;
+      color: #4CAF50;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+    a.home-link:hover {
+      color: #4CAF50;
+    }
+    .highlight-status {
+      font-size: 36px;
+      font-weight: bold;
+      color: #ff9800; /* 강조 색상 */
+    }
+  </style>
+</head>
+<body>
+<a href="/" class="home-link"><i class="fas fa-home"></i> 홈으로</a>
+<nav>
+  <a href="/admin-dashboard">승인 요청</a>
+  <a href="/visitor-list">방문자 목록 조회</a>
+  <a href="/statistics">통계 페이지</a>
+</nav>
+<h1>모든 방문자 목록</h1>
+<table>
+  <thead>
+  <tr>
+    <th>이름</th>
+    <th>이메일</th>
+    <th>전화번호</th>
+    <th>방문 목적</th>
+    <th>신청 날짜</th>
+    <th>승인 상태</th>
+    <th>퇴입</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% visitors.forEach(visitor => { %>
+    <tr id="visitor-<%= visitor.uno %>">
+      <td><%= visitor.name %></td>
+      <td><%= visitor.email %></td>
+      <td><%= visitor.phone %></td>
+      <td><%= visitor.ob %></td>
+      <td><%= new Date(visitor.regdate).toLocaleString() %></td>
+      <td><%= visitor.status %></td>
+      <td id="exit-cell-<%= visitor.uno %>">
+        <% if (visitor.status === "APPROVED") { %>
+          <button onclick="logExit('<%= visitor.uno %>')">퇴입</button>
+        <% } %>
+      </td>
+    </tr>
+  <% }); %>
+  </tbody>
+</table>
+
+
+<script>
+  function highlightStatus(uno) {
+    const statusElement = document.getElementById(`visitor-status-${uno}`);
+    if (statusElement) {
+      statusElement.classList.add('highlight-status');
+    }
+  }
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const highlightUno = urlParams.get('highlight');
+
+  if (highlightUno) {
+    highlightStatus(highlightUno);
+  }
+
+  function logExit(uno) {
+    fetch(`/admin-exit/${uno}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ admin_id: 1 })
+    })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error(`Server error: ${response.status}`);
+              }
+              return response.json();
+            })
+            .then(data => {
+              if (data.success) {
+                const statusElement = document.getElementById(`visitor-status-${uno}`);
+                const exitCell = document.getElementById(`exit-cell-${uno}`);
+
+                // 요소가 존재하는지 확인
+                if (statusElement) {
+                  statusElement.innerHTML = '퇴입';
+                } else {
+                  console.error(`Element with ID visitor-status-${uno} not found.`);
+                }
+
+                if (exitCell) {
+                  exitCell.innerHTML = '퇴입 완료';
+                } else {
+                  console.error(`Element with ID exit-cell-${uno} not found.`);
+                }
+
+                alert("퇴입되었습니다.");
+              } else {
+                alert(data.message || "퇴입에 실패했습니다.");
+              }
+            })
+            .catch(error => alert(`서버 오류: ${error.message}`));
+  }
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>방문자 상세 정보</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        table {
+            width: 50%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: #ffffff;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+<h1>방문자 상세 정보</h1>
+
+<table>
+    <tbody>
+    <tr>
+        <th>번호 (UNO)</th>
+        <td><%= visitor.uno %></td>
+    </tr>
+    <tr>
+        <th>이름</th>
+        <td><%= visitor.name %></td>
+    </tr>
+    <tr>
+        <th>이메일</th>
+        <td><%= visitor.email %></td>
+    </tr>
+    <tr>
+        <th>전화번호</th>
+        <td><%= visitor.phone %></td>
+    </tr>
+    <tr>
+        <th>소속 관리자</th>
+        <td><%= visitor.aname %></td>
+    </tr>
+    <tr>
+        <th>직업</th>
+        <td><%= visitor.job %></td>
+    </tr>
+    <tr>
+        <th>방문 목적</th>
+        <td><%= visitor.ob %></td>
+    </tr>
+    <tr>
+        <th>상태</th>
+        <td>
+            <% if (visitor.status === "PENDING") { %>
+                대기 중
+            <% } else if (visitor.status === "APPROVED") { %>
+                승인됨
+            <% } else if (visitor.status === "REJECTED") { %>
+                거부됨
+            <% } else if (visitor.status === "EXIT") { %>
+                퇴입
+            <% } else { %>
+                알 수 없음
+            <% } %>
+        </td>
+    </tr>
+
+    <tr>
+        <th>등록 날짜</th>
+        <td><%= new Date(visitor.regdate).toLocaleString() %></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
