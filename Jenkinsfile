@@ -44,10 +44,10 @@ pipeline {
         stage('Docker Image Pushing') {
             steps {
                 sh '''
-                docker push ${DOCKER_IMAGE_OWNER}/prj-frontend:fpj
-                docker push ${DOCKER_IMAGE_OWNER}/prj-frontend:fpj-${DOCKER_BUILD_TAG}
-                docker push ${DOCKER_IMAGE_OWNER}/prj-admin:fpj-${DOCKER_BUILD_TAG}
-                docker push ${DOCKER_IMAGE_OWNER}/prj-visitor:fpj-${DOCKER_BUILD_TAG}
+                docker push ${DOCKER_IMAGE_OWNER}/prj-frontend
+                docker push ${DOCKER_IMAGE_OWNER}/prj-frontend:${DOCKER_BUILD_TAG}
+                docker push ${DOCKER_IMAGE_OWNER}/prj-admin:{DOCKER_BUILD_TAG}
+                docker push ${DOCKER_IMAGE_OWNER}/prj-visitor:${DOCKER_BUILD_TAG}
                 '''
             }
         }
