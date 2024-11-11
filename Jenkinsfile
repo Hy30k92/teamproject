@@ -17,7 +17,7 @@ pipeline {
                     dir('project-jenkins') {
                         git branch: 'master', url: "https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/${REPO_URL}"
                     }
-                    dir('project-argocd') {
+                    dir('project-argo') {
                         git branch: 'master', url: "https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/${ARGOCD_REPO_URL}"
                    }
             }
@@ -87,7 +87,7 @@ pipeline {
         stage('Push Changes') {
             steps {
                 dir('project-argo') {
-                    withCredentials([usernamePassword(credentialsId: 'github_token', usernameVariable: 'GIT_CREDENTIALS_USR', passwordVariable: 'GIT_CREDENTIALS_PSW')]) {
+                    withCredentials([usernamePassword(credentialsId: '80645f1d-457f-473b-a0f4-f17a63e9e8e9', usernameVariable: 'GIT_CREDENTIALS_USR', passwordVariable: 'GIT_CREDENTIALS_PSW')]) {
                         sh '''
                         git push https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/${ARGOCD_REPO_URL} master
                         '''
