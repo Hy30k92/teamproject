@@ -46,7 +46,7 @@ pipeline {
                 sh '''
                 docker push ${DOCKER_IMAGE_OWNER}/prj-frontend
                 docker push ${DOCKER_IMAGE_OWNER}/prj-frontend:${DOCKER_BUILD_TAG}
-                docker push ${DOCKER_IMAGE_OWNER}/prj-admin:{DOCKER_BUILD_TAG}
+                docker push ${DOCKER_IMAGE_OWNER}/prj-admin:${DOCKER_BUILD_TAG}
                 docker push ${DOCKER_IMAGE_OWNER}/prj-visitor:${DOCKER_BUILD_TAG}
                 '''
             }
@@ -56,9 +56,9 @@ pipeline {
             steps {
                 dir('project-argo') {
                     sh """
-                    sed -i "/${DOCKER_IMAGE_OWNER}\\/k8s-frontend:fpj/{n;s/tag: \\".*\\"/tag: \\"${DOCKER_BUILD_TAG}\\"/}" deploy-argocd/values.yaml
-                    sed -i "/${DOCKER_IMAGE_OWNER}\\//k8s-admin:fpj/{n;s/tag: \\".*\\"/tag: \\"${DOCKER_BUILD_TAG}\\"/}" deploy-argocd/values.yaml
-                    sed -i "/${DOCKER_IMAGE_OWNER}\\/k8s-visitor:fpj/{n;s/tag: \\".*\\"/tag: \\"${DOCKER_BUILD_TAG}\\"/}" deploy-argocd/values.yaml
+                    sed -i "/${DOCKER_IMAGE_OWNER}\\/prj-frontend/{n;s/tag: \\".*\\"/tag: \\"${DOCKER_BUILD_TAG}\\"/}" deploy-argocd/values.yaml
+                    sed -i "/${DOCKER_IMAGE_OWNER}\\//prj-admin/{n;s/tag: \\".*\\"/tag: \\"${DOCKER_BUILD_TAG}\\"/}" deploy-argocd/values.yaml
+                    sed -i "/${DOCKER_IMAGE_OWNER}\\/prj-visitor/{n;s/tag: \\".*\\"/tag: \\"${DOCKER_BUILD_TAG}\\"/}" deploy-argocd/values.yaml
                     """
                 }
             }
