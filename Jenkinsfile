@@ -45,9 +45,9 @@ pipeline {
             steps {
                 sh '''
                 docker push ${DOCKER_IMAGE_OWNER}/k8s-frontend:fpj
-                docker push ${DOCKER_IMAGE_OWNER}/k8s-frontend:${DOCKER_BUILD_TAG}
-                docker push ${DOCKER_IMAGE_OWNER}/k8s-admin:${DOCKER_BUILD_TAG}
-                docker push ${DOCKER_IMAGE_OWNER}/k8s-visitor:${DOCKER_BUILD_TAG}
+                docker push ${DOCKER_IMAGE_OWNER}/k8s-frontend:fpj${DOCKER_BUILD_TAG}
+                docker push ${DOCKER_IMAGE_OWNER}/k8s-admin:fpj${DOCKER_BUILD_TAG}
+                docker push ${DOCKER_IMAGE_OWNER}/k8s-visitor:fpj${DOCKER_BUILD_TAG}
                 '''
             }
         }
