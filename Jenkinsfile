@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE_OWNER = 'hy30k'
-        DOCKER_BUILD_TAG = "v${env.BUILD_NUMBER}"
+        DOCKER_BUILD_TAG = "arm-v${env.BUILD_NUMBER}"
         DOCKER_TOKEN = credentials('docker')
         GIT_CREDENTIALS = credentials('80645f1d-457f-473b-a0f4-f17a63e9e8e9')
         REPO_URL = 'hy30k92/teamproject.git'
